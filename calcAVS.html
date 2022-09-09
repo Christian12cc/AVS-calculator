@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <style>
+    .notpossible {
+      text-align: right;
+      color: darkgrey;
+    }
+
+    .TableCost {
+      text-align: right;
+    }
+
+    #TableFeatures {
+      position: absolute;
+      top: 65px;
+      background-color: #e8f3fc;
+    }
+
+    .THfeatures {
+      vertical-align: bottom;
+    }
+
+    .TDfeatures {
+      vertical-align: top;
+    }
+
+    #pricing {
+      position: absolute;
+      top: 380px
+    }
+
+    #NbVM {
+      position: absolute;
+      top: 450px
+    }
+
+    .image {
+      width: 50px;
+    }
+
+    #NBhosts {
+      display: inline-block;
+      width: 50px;
+      -webkit-box-sizing: content-box;
+      -moz-box-sizing: content-box;
+      box-sizing: content-box;
+      margin: 0 10px;
+      padding: 3px 1px 3px 10px;
+      border: none;
+      -webkit-border-radius: 26px;
+      border-radius: 26px;
+      font: normal normal bold 16px/normal Arial, Helvetica, sans-serif;
+      color: rgba(11, 75, 237, 1);
+      text-align: center;
+      -o-text-overflow: clip;
+      text-overflow: clip;
+      background: rgba(239, 239, 239, 1);
+      -webkit-box-shadow: 5px 5px 5px 5px rgba(0, 0, 0, 0.4);
+      box-shadow: 3px 3px 3px 2px rgba(0, 0, 0, 0.4);
+      text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.66);
+      -webkit-transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1);
+      -moz-transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1);
+      -o-transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1);
+      transition: all 200ms cubic-bezier(0.42, 0, 0.58, 1);
+    }
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script>
+
+
+    $(document).ready(function () {
+
+      var Hosts = new Object
+      Hosts.AV36 = { cores: 36, mem: 576, disks: 15.3, CPUdesc: "2 Intel xeon Gold 6140 18 cores 2.3 GHz (SkyLake)", Disksdesc: "SSD" }
+      Hosts.AV36P = { cores: 36, mem: 768, disks: 19.2, CPUdesc: "2 Intel xeon Gold 6140 18 cores 2.6 GHz / 3.9 GHz (Cascade Lake)", Disksdesc: "NVMe" }
+      Hosts.AV52 = { cores: 52, mem: 1536, disks: 38.4, CPUdesc: "2 Intel xeon Gold 6140 26 cores 2.7 GHz / 4 GHz (Cascade Lake)", Disksdesc: "NVMe" }
+
+      Host = "AV36"
+      Region = "EU West"
+      var valueSelected
+
+      var Fonction = {
+
+        f_init: function () {
+          Fonction.f_CreateListType().done( function() {
+            Fonction.f_cores()
+            Fonction.f_mem()
+            Fonction.f_storage()
+            Fonction.f_pricingregion().done( function() {
+              Fonction.f_cost(Region)
+            })
+          })
+        },
+
+        f_mem: function () {
+          var type = $("#HostType option:selected").val();
+          mem = Hosts[type].mem;
+          $("#RAM").text(($("#NBhosts").val() * mem / 1024).toFixed(2) + "TB")
+          $("#MEMdesc").html( mem + " GB")
+        },
+
+        f_cores: function () {
+          var type = $("#HostType option:selected").val();
+          cores = Hosts[type].cores;
+          CPUdesc = Hosts[type].CPUdesc;
+          $("#cores").text($("#NBhosts").val() * cores)
+          $("#CPUDesc").html(CPUdesc + "<br />" + cores + " cores")
+        },
+
+        f_storage_change: function () {
+          var type = $("#HostType option:selected").val();
+          disks = Hosts[type].disks;
+
+          switch ($('input[name=StorageSettings]:checked').val()) {
+            case "1": sto = disks * ($("#NBhosts").val() / 2)
+              break;
+            case "2": sto = disks * ($("#NBhosts").val() - 1)
+              break;
+            case "3": sto = disks * ($("#NBhosts").val() / 3)
+              break;
+            case "4": sto = disks * ($("#NBhosts").val() - 2)
+              break;
+            case "5": sto = disks * ($("#NBhosts").val() / 4)
+              break;
+          }
+
+          $("#Storage").text(sto.toFixed(2) + "TB");
+          $("#Storage2").text(((sto - 5) * 0.75 * $("#SelectDedup option:selected").val()).toFixed(2) + "TB");
+          $("#StorageDesc").html( disks + " TB");
+        },
+
+        f_storage: function () {
+          switch ($("#NBhosts").val()) {
+            case "3": $('.StorageSettings').remove();
+              $('#divStorageSettings').append('<input type="radio" class="StorageSettings" name="StorageSettings" value="1" checked><label class="StorageSettings">FFT 1 - RAID 1</label>');
+              break;
+            case "4": $('.StorageSettings').remove();
+              $('#divStorageSettings').append('<input type="radio" class="StorageSettings" name="StorageSettings" value="1" ><label class="StorageSettings">FFT 1 - RAID 1</label><br class="StorageSettings" />');
+              $('#divStorageSettings').append('<input type="radio" class="StorageSettings" name="StorageSettings" value="2" checked><label class="StorageSettings">FFT 1 - RAID 5</label>');
+              break;
+            case "5": $('.StorageSettings').remove();
+              $('#divStorageSettings').append('<input type="radio" class="StorageSettings" name="StorageSettings" value="1" ><label class="StorageSettings">FFT 1 - RAID 1</label><br class="StorageSettings" />');
+              $('#divStorageSettings').append('<input type="radio" class="StorageSettings" name="StorageSettings" value="2" ><label class="StorageSettings">FFT 1 - RAID 5</label><br class="StorageSettings" />');
+              $('#divStorageSettings').append('<input type="radio" class="StorageSettings" name="StorageSettings" value="3" checked><label class="StorageSettings">FFT 2 - RAID 1</label>');
+              break;
+            case "6": $('.StorageSettings').remove();
+              $('#divStorageSettings').append('<input type="radio" class="StorageSettings" name="StorageSettings" value="1" ><label class="StorageSettings">FFT 1 - RAID 1</label><br class="StorageSettings" />');
+              $('#divStorageSettings').append('<input type="radio" class="StorageSettings" name="StorageSettings" value="2" ><label class="StorageSettings">FFT 1 - RAID 5</label><br class="StorageSettings" />');
+              $('#divStorageSettings').append('<input type="radio" class="StorageSettings" name="StorageSettings" value="3" ><label class="StorageSettings">FFT 2 - RAID 1</label><br class="StorageSettings" />');
+              $('#divStorageSettings').append('<input type="radio" class="StorageSettings" name="StorageSettings" value="4" checked><label class="StorageSettings">FFT 2 - RAID 6</label>');
+              break;
+            case "7": $('.StorageSettings').remove();
+              $('#divStorageSettings').append('<input type="radio" class="StorageSettings" name="StorageSettings" value="3" ><label class="StorageSettings">FFT 2 - RAID 1</label><br class="StorageSettings" />');
+              $('#divStorageSettings').append('<input type="radio" class="StorageSettings" name="StorageSettings" value="4" checked><label class="StorageSettings">FFT 2 - RAID 6</label><br class="StorageSettings" />');
+              $('#divStorageSettings').append('<input type="radio" class="StorageSettings" name="StorageSettings" value="5" ><label class="StorageSettings">FFT 3 - RAID 1</label>');
+              break;
+          }
+          Fonction.f_storage_change()
+        },
+
+        f_CreateListType: function () {
+          url = "https://prices.azure.com/api/retail/prices?$filter=startswith(armskuname,%20%27AV%27)%20and%20%20pricetype%20eq%20%27%20Consumption%27&$orderby=armSkuName"
+          return $.ajax({
+            url: 'https://api.allorigins.win/get?url=' + encodeURIComponent(url), success: function (data) {
+              JSONhost = JSON.parse(data.contents);
+              var typeHostList = []
+              var typeHostprec = ""
+              $.each(JSONhost.Items, function (index, value) {
+                if ($.inArray(value.armSkuName, typeHostList) === -1) {
+                  if (value.armSkuName != typeHostprec) {
+                    typeHostList.push([value.armSkuName]);
+                    typeHostprec = value.armSkuName
+                  }
+                }
+              });
+              typeHostList = typeHostList.sort();
+
+              $('.HostType').remove();
+
+              $.each(typeHostList, function (index, value) {
+                if (index == 0) {
+                  selected = "Selected"
+                  valueSelected=value[0]
+                }
+                else {
+                  selected = ""
+                }
+                $('#HostType').append('<option  value="' + value[0] + '" ' + selected + '>' + value[0] + '</option>');
+              });
+            }
+          });
+        },
+
+        f_pricingregion: function () {
+          var type = $("#HostType option:selected").val();
+          url = "https://prices.azure.com/api/retail/prices?currencyCode=%27USD%27&$filter=priceType%20eq%20%27Consumption%27%20and%20startswith(armskuName,%27" + type + "%27)"
+          return $.ajax({
+            url: 'https://api.allorigins.win/get?url=' + encodeURIComponent(url), success: function (data) {
+              JSONregion = JSON.parse(data.contents);
+              var locations = []
+              var locprec = ""
+              $.each(JSONregion.Items, function (index, value) {
+                if ($.inArray(value.location, locations) === -1) {
+                  if (value.location != locprec) {
+                    locations.push([value.location, value.armRegionName]);
+                    locprec = value.location
+                  }
+                }
+              });
+              locs = locations.sort();
+
+              $('.pricingregion').remove();
+
+              $.each(locs, function (index, value) {
+//                if (value[0] == "EU West") {
+                if (index == 0) {
+                  selected = "Selected"
+                  valueSelected=value[0]
+                }
+                else {
+                  selected = ""
+                }
+                $('#SelectRegion').append('<option class="pricingregion" value="' + value[0] + '" ' + selected + '>' + value[0] + ' - ' + value[1] + '</option>');
+              });
+
+//              Fonction.f_cost(valueSelected);
+            }
+          });
+        },
+
+        f_precost: function (location) {
+          region = $("#SelectRegion option:selected").val()
+          Fonction.f_cost(region);
+        },
+
+        f_cost: function (location) {
+          var type = $("#HostType option:selected").val();
+          var currency = $("#Currency option:selected").val();
+          //   var location=$("#SelectRegion option:selected").val();
+
+          $(".PricingNbHost").text($("#NBhosts").val())
+
+          var locationU = location.replace(" ", "%20");
+          $("#cost1hreservation1").text("");
+          $("#cost1hreservation3").text("")
+          $("#cost1h").text("")
+          $("#cost1mreservation1").text("");
+          $("#cost1mreservation3").text("")
+          $("#cost1m").text("")
+          $("#cost1yreservation1").text("");
+          $("#cost1yreservation3").text("")
+          $("#cost1y").text("")
+          $("#cost3yreservation1").text("");
+          $("#cost3yreservation3").text("")
+          $("#cost3y").text("")
+
+          url = "https://prices.azure.com/api/retail/prices?currencyCode=%27" + currency + "%27&$filter=location%20eq%20%27" + locationU + "%27%20and%20startswith(armskuName,%27" + type + "%27)"
+          $.ajax({
+            url: 'https://api.allorigins.win/get?url=' + encodeURIComponent(url), success: function (data) {
+              JSONregion = JSON.parse(data.contents);
+
+              const formatConfig = {
+                style: "currency",
+                currency: currency, // CNY for Chinese Yen, EUR for Euro
+                minimumFractionDigits: 2,
+                currencyDisplay: "symbol",
+              };
+              const FormatLang = Intl.NumberFormat(navigator.language, formatConfig)
+
+              $.each(JSONregion.Items, function (index, value) {
+
+                switch (value.reservationTerm) {
+                  case "1 Year": $("#cost1hreservation1").text(FormatLang.format(((value.retailPrice / 12 / 30.5 / 24) * $("#NBhosts").val()).toFixed(2)));
+                    $("#cost1mreservation1").text(FormatLang.format(((value.retailPrice / 12) * $("#NBhosts").val()).toFixed(2)));
+                    $("#cost1yreservation1").text(FormatLang.format(((value.retailPrice) * $("#NBhosts").val()).toFixed(2)));
+                    $("#cost3yreservation1").text(FormatLang.format(((value.retailPrice * 3) * $("#NBhosts").val()).toFixed(2)));
+                    break;
+                  case "3 Years": $("#cost1hreservation3").text(FormatLang.format(((value.retailPrice / 36 / 30.5 / 24) * $("#NBhosts").val()).toFixed(2)));
+                    $("#cost1mreservation3").text(FormatLang.format(((value.retailPrice / 36) * $("#NBhosts").val()).toFixed(2)));
+                    $("#cost1yreservation3").text(FormatLang.format(((value.retailPrice / 3) * $("#NBhosts").val()).toFixed(2)));
+                    $("#cost3yreservation3").text(FormatLang.format(((value.retailPrice) * $("#NBhosts").val()).toFixed(2)));
+                    break;
+                  default: $("#cost1h").text(FormatLang.format(((value.retailPrice) * $("#NBhosts").val()).toFixed(2)));
+                    $("#cost1m").text(FormatLang.format(((value.retailPrice * 24 * 30.5) * $("#NBhosts").val()).toFixed(2)));
+                    $("#cost1y").text(FormatLang.format(((value.retailPrice * 24 * 30.5 * 12) * $("#NBhosts").val()).toFixed(2)));
+                    $("#cost3y").text(FormatLang.format(((value.retailPrice * 24 * 30.5 * 12 * 3) * $("#NBhosts").val()).toFixed(2)));
+                    break;
+                }
+              })
+
+            }
+          });
+
+        }
+      }
+
+      $("#HostType").change(function () {
+        Fonction.f_pricingregion().done( function() {
+          Fonction.f_cores()
+          Fonction.f_mem()
+          Fonction.f_storage()
+
+          Fonction.f_precost()
+        })
+      });
+
+      $("#NBhosts").change(function () {
+        Fonction.f_cores()
+        Fonction.f_mem()
+        Fonction.f_storage()
+        Fonction.f_precost()
+      });
+
+      $('#divStorageSettings').change(function () {
+        Fonction.f_storage_change()
+      });
+
+      $('#SelectDedup').change(function () {
+        Fonction.f_storage_change()
+      });
+
+      $('#Currency').change(function () {
+        Fonction.f_precost()
+      });
+
+      $('#SelectRegion').change(function () {
+        Fonction.f_precost()
+      });
+
+      Fonction.f_init()
+    });
+  </script>
+
+</head>
+
+<body>
+  <h1>AVS Calculator</h1> <a href="https://azure.microsoft.com/services/azure-vmware">Azure VMware Solution</a>
+  <Table id=TableFeatures>
+    <th class="THfeatures">
+      Nb hosts
+    </th>
+    <th class="THfeatures">
+      Type
+    </th>
+    <th class="THfeatures"><img class="image"
+        src="https://storagereportazure.z28.web.core.windows.net/CalcAVS/CPU.png" /><br />CPU</th>
+    <th class="THfeatures"><img class="image"
+        src="https://storagereportazure.z28.web.core.windows.net/CalcAVS/ram.svg" /><br /> Mem</th>
+    <th class="THfeatures"><img class="image"
+        src="https://storagereportazure.z28.web.core.windows.net/CalcAVS/mobile-storage.svg" /><br /> Storage</th>
+    <tr>
+      <td width=100 class="TDfeatures">
+        <center>
+          1
+        </center>
+      </td>
+      <td width=100 class="TDfeatures">
+        <center>
+        <select id="HostType">
+        </select>
+        </center>
+      </td>
+      <td width=220 class="TDfeatures">
+        <center>
+          <span id="CPUDesc"></span>
+        </center>
+      </td>
+      <td width=220 class="TDfeatures">
+        <center>
+          <span id="MEMdesc"></span>
+        </center>
+      </td>
+      <td width=500>
+        <center>
+          <span id="StorageDesc"></span>
+        </center>
+      </td>
+    </tr>
+    <tr>
+      <td width=100 class="TDfeatures">
+        <center>
+          <input type="number" id="NBhosts" value="3" min="3" max="16" />
+        </center>
+      </td>
+      <td width=100 class="TDfeatures">
+        <center>
+          <span id="HostType"></span>
+        </center>
+      </td>
+      <td width=200 class="TDfeatures">
+        <center>
+          <span id="cores"></span> cores
+        </center>
+      </td>
+      <td width=200 class="TDfeatures">
+        <center>
+          <span id="RAM"></span> RAM
+        </center>
+      </td>
+      <td width=500>
+        <center>
+          <table>
+            <tr>
+              <td class="TDfeatures">
+              </td>
+              <td>
+                <div id="divStorageSettings"></div>
+                <br />
+                Storage brut: <span id="Storage"></span><br />
+                Dedup estimation <select id="SelectDedup">
+                  <option value="1">1</option>
+                  <option value="1.5">1.5</option>
+                  <option value="2">2</option>
+                  <option value="2.5">2.5</option>
+                  <option value="3" selected>3</option>
+                  <option value="3.5">3.5</option>
+                  <option value="4">4</option>
+                  <option value="4.5">4.5</option>
+                  <option value="5">5</option>
+                  <option value="5.5">5.5</option>
+                  <option value="6">6</option>
+                  <option value="6.5">6.5</option>
+                  <option value="7">7</option>
+                </select>
+                <br />
+                Storage (-5TB managment, -25%, with dedup): <span id="Storage2"></span><br />
+              </td>
+            </tr>
+          </table>
+        </center>
+      </td>
+    </tr>
+  </table>
+
+  <br />
+
+  <div id="pricing"><b> Pricing for <span class="PricingNbHost"></span> hosts </b>(including hardware, VMware software
+    licenses, installation, updates, maintenance and support) <br />
+    <table>
+      <tr>
+        <td>
+          <table width=300>
+            <tr>
+              <td>
+                Currency
+              </td>
+              <td>
+                <select id="Currency">
+                  <option value="USD" selected>US Dollars $</option>
+                  <option value="EUR">Euros €</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Region
+              </td>
+              <td>
+                <select id="SelectRegion"></select>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table width=700 class=TableCost>
+            <th>Cost estimation</th>
+            <th>1 hour</th>
+            <th>1 month</th>
+            <th>1 year</th>
+            <th>3 years</th>
+            <TR>
+              <TD>Without reservation</TD>
+              <TD>
+                <div id="cost1h"></div>
+              </TD>
+              <TD>
+                <div id="cost1m"></div>
+              </TD>
+              <TD>
+                <div id="cost1y"></div>
+              </TD>
+              <TD>
+                <div id="cost3y"></div>
+              </TD>
+            </TR>
+            <TR>
+              <TD>Reservation 1 year</TD>
+              <TD>
+                <div class="notpossible" id="cost1hreservation1"></div>
+              </TD>
+              <TD>
+                <div class="notpossible" id="cost1mreservation1"></div>
+              </TD>
+              <TD>
+                <div id="cost1yreservation1"></div>
+              </TD>
+              <TD>
+                <div id="cost3yreservation1"></div>
+              </TD>
+            </TR>
+            <TR>
+              <TD>Reservation 3 years</TD>
+              <TD>
+                <div class="notpossible" id="cost1hreservation3"></div>
+              </TD>
+              <TD>
+                <div class="notpossible" id="cost1mreservation3"></div>
+              </TD>
+              <TD>
+                <div class="notpossible" id="cost1yreservation3"></div>
+              </TD>
+              <TD>
+                <div id="cost3yreservation3"></div>
+              </TD>
+            </TR>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+</body>
+
+</html>
