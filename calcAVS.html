@@ -163,7 +163,7 @@
         },
 
         f_CreateListType: function () {
-          url = "https://prices.azure.com/api/retail/prices?$filter=startswith(armskuname,%20%27AV%27)%20and%20startswith(armskuname,%20%27AVD%27)%20eq%20false%20and%20%20pricetype%20eq%20%27%20Consumption%27&$orderby=armSkuName"
+          url = "https://prices.azure.com/api/retail/prices?$filter=startswith(armskuname,%20%27AV%27)%20and%20startswith(armskuname,%20%27AVD%27)%20eq%20false%20and%20%20pricetype%20eq%20%27Consumption%27&$orderby=armSkuName"
           return $.ajax({
             url: 'https://api.allorigins.win/get?url=' + encodeURIComponent(url), success: function (data) {
               JSONhost = JSON.parse(data.contents);
