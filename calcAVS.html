@@ -296,6 +296,7 @@
                     $("#cost1yreservation5").text(FormatLang.format(((value.retailPrice / 5) * $("#NBhosts").val()).toFixed(2)));
                     $("#cost3yreservation5").text(FormatLang.format((((value.retailPrice / 5) * 3) * $("#NBhosts").val()).toFixed(2)));
                     $("#cost5yreservation5").text(FormatLang.format(((value.retailPrice) * $("#NBhosts").val()).toFixed(2)));
+                    break;
                   default: $("#cost1h").text(FormatLang.format(((value.retailPrice) * $("#NBhosts").val()).toFixed(2)));
                     $("#cost1m").text(FormatLang.format(((value.retailPrice * 24 * 30.5) * $("#NBhosts").val()).toFixed(2)));
                     $("#cost1y").text(FormatLang.format(((value.retailPrice * 24 * 30.5 * 12) * $("#NBhosts").val()).toFixed(2)));
