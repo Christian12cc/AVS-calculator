@@ -248,15 +248,19 @@
           var locationU = location.replace(" ", "%20");
           $("#cost1hreservation1").text("");
           $("#cost1hreservation3").text("")
+          $("#cost1mreservation5").text("")
           $("#cost1h").text("")
           $("#cost1mreservation1").text("");
           $("#cost1mreservation3").text("")
+          $("#cost1yreservation5").text("")
           $("#cost1m").text("")
           $("#cost1yreservation1").text("");
           $("#cost1yreservation3").text("")
+          $("#cost3yreservation5").text("")
           $("#cost1y").text("")
           $("#cost3yreservation1").text("");
           $("#cost3yreservation3").text("")
+          $("#cost5yreservation5").text("")
           $("#cost3y").text("")
 
           url = "https://prices.azure.com/api/retail/prices?currencyCode=%27" + currency + "%27&$filter=location%20eq%20%27" + locationU + "%27%20and%20armskuName%20eq%20%27" + type + "%27"
@@ -279,16 +283,24 @@
                     $("#cost1mreservation1").text(FormatLang.format(((value.retailPrice / 12) * $("#NBhosts").val()).toFixed(2)));
                     $("#cost1yreservation1").text(FormatLang.format(((value.retailPrice) * $("#NBhosts").val()).toFixed(2)));
                     $("#cost3yreservation1").text(FormatLang.format(((value.retailPrice * 3) * $("#NBhosts").val()).toFixed(2)));
+                    $("#cost5yreservation1").text(FormatLang.format(((value.retailPrice * 5) * $("#NBhosts").val()).toFixed(2)));
                     break;
                   case "3 Years": $("#cost1hreservation3").text(FormatLang.format(((value.retailPrice / 36 / 30.5 / 24) * $("#NBhosts").val()).toFixed(2)));
                     $("#cost1mreservation3").text(FormatLang.format(((value.retailPrice / 36) * $("#NBhosts").val()).toFixed(2)));
                     $("#cost1yreservation3").text(FormatLang.format(((value.retailPrice / 3) * $("#NBhosts").val()).toFixed(2)));
                     $("#cost3yreservation3").text(FormatLang.format(((value.retailPrice) * $("#NBhosts").val()).toFixed(2)));
+                    $("#cost5yreservation3").text(FormatLang.format((((value.retailPrice / 3) *5) * $("#NBhosts").val()).toFixed(2)));
                     break;
+                  case "5 Years": $("#cost1hreservation5").text(FormatLang.format(((value.retailPrice / 60 / 30.5 / 24) * $("#NBhosts").val()).toFixed(2)));
+                    $("#cost1mreservation5").text(FormatLang.format(((value.retailPrice / 60) * $("#NBhosts").val()).toFixed(2)));
+                    $("#cost1yreservation5").text(FormatLang.format(((value.retailPrice / 5) * $("#NBhosts").val()).toFixed(2)));
+                    $("#cost3yreservation5").text(FormatLang.format((((value.retailPrice / 5) * 3) * $("#NBhosts").val()).toFixed(2)));
+                    $("#cost5yreservation5").text(FormatLang.format(((value.retailPrice) * $("#NBhosts").val()).toFixed(2)));
                   default: $("#cost1h").text(FormatLang.format(((value.retailPrice) * $("#NBhosts").val()).toFixed(2)));
                     $("#cost1m").text(FormatLang.format(((value.retailPrice * 24 * 30.5) * $("#NBhosts").val()).toFixed(2)));
                     $("#cost1y").text(FormatLang.format(((value.retailPrice * 24 * 30.5 * 12) * $("#NBhosts").val()).toFixed(2)));
                     $("#cost3y").text(FormatLang.format(((value.retailPrice * 24 * 30.5 * 12 * 3) * $("#NBhosts").val()).toFixed(2)));
+                    $("#cost5y").text(FormatLang.format(((value.retailPrice * 24 * 30.5 * 12 * 5) * $("#NBhosts").val()).toFixed(2)));
                     break;
                 }
               })
@@ -473,6 +485,7 @@
             <th>1 month</th>
             <th>1 year</th>
             <th>3 years</th>
+<!--            <th>5 years</th> -->
             <TR>
               <TD>Without reservation</TD>
               <TD>
@@ -487,6 +500,9 @@
               <TD>
                 <div id="cost3y"></div>
               </TD>
+<!--              <TD>
+                <div id="cost5y"></div>
+              </TD>  -->
             </TR>
             <TR>
               <TD>Reservation 1 year</TD>
@@ -502,6 +518,9 @@
               <TD>
                 <div id="cost3yreservation1"></div>
               </TD>
+<!--              <TD>
+                <div id="cost5yreservation1"></div>
+              </TD> -->
             </TR>
             <TR>
               <TD>Reservation 3 years</TD>
@@ -517,7 +536,28 @@
               <TD>
                 <div id="cost3yreservation3"></div>
               </TD>
+<!--              <TD>
+                <div id="cost5yreservation3"></div>
+              </TD> -->
             </TR>
+<!--            <TR>
+              <TD>Reservation 5 years</TD>
+              <TD>
+                <div class="notpossible" id="cost1hreservation5"></div>
+              </TD>
+              <TD>
+                <div class="notpossible" id="cost1mreservation5"></div>
+              </TD>
+              <TD>
+                <div class="notpossible" id="cost1yreservation5"></div>
+             </TD>
+              <TD>
+                <div class="notpossible" id="cost3yreservation5"></div>
+             </TD>
+              <TD>
+                <div id="cost5yreservation5"></div>
+              </TD>
+            </TR> -->
           </table>
         </td>
       </tr>
