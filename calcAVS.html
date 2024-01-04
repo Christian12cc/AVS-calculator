@@ -246,22 +246,26 @@
           $(".PricingNbHost").text($("#NBhosts").val())
 
           var locationU = location.replace(" ", "%20");
-          $("#cost1hreservation1").text("");
+          $("#cost1hreservation1").text("")
           $("#cost1hreservation3").text("")
-          $("#cost1mreservation5").text("")
+          $("#cost1hreservation5").text("")
           $("#cost1h").text("")
-          $("#cost1mreservation1").text("");
+          $("#cost1mreservation1").text("")
           $("#cost1mreservation3").text("")
-          $("#cost1yreservation5").text("")
+          $("#cost1mreservation5").text("")
           $("#cost1m").text("")
-          $("#cost1yreservation1").text("");
+          $("#cost1yreservation1").text("")
           $("#cost1yreservation3").text("")
-          $("#cost3yreservation5").text("")
+          $("#cost1yreservation5").text("")
           $("#cost1y").text("")
-          $("#cost3yreservation1").text("");
+          $("#cost3yreservation1").text("")
           $("#cost3yreservation3").text("")
-          $("#cost5yreservation5").text("")
+          $("#cost3yreservation5").text("")
           $("#cost3y").text("")
+	  $("#cost5yreservation1").text("")
+          $("#cost5yreservation3").text("")
+          $("#cost5yreservation5").text("")
+          $("#cost5y").text("")
 
           url = "https://prices.azure.com/api/retail/prices?currencyCode=%27" + currency + "%27&$filter=location%20eq%20%27" + locationU + "%27%20and%20armskuName%20eq%20%27" + type + "%27"
           $.ajax({
