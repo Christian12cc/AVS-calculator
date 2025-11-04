@@ -73,12 +73,15 @@
     $(document).ready(function () {
 
       var Hosts = new Object
-      Hosts.AV36 = { cores: 36, mem: 576, disks: 15.3, CPUdesc: "2 Intel Xeon Gold 6140 18 cores 2.3 GHz", Disksdesc: "SSD" }
-      Hosts.AV36P = { cores: 36, mem: 768, disks: 19.2, CPUdesc: "2 Intel Xeon Gold 6240 18 cores 2.6 GHz / 3.9 GHz Turbo", Disksdesc: "NVMe" }
-	  Hosts.AV48 = { cores: 48, mem: 1536, disks: 19.2, CPUdesc: "2 Intel Xeon Gold 6442Y 24 cores 2.6 GHz / 3.3 GHz Turbo / 4 GHz Max", Disksdesc: "NVMe" }
-      Hosts.AV52 = { cores: 52, mem: 1536, disks: 38.4, CPUdesc: "2 Intel Xeon Platinum 8270 26 cores 2.7 GHz / 4.0 GHz Turbo", Disksdesc: "NVMe" }
-      Hosts.AV64 = { cores: 64, mem: 1024, disks: 15.36, CPUdesc: "2 Intel Xeon Platinum 8370C 32 cores 2.8 GHz / 3.5 GHz Turbo", Disksdesc: "NVMe" }
-	  Hosts['AV64 Trial Node'] = { cores: 64, mem: 1024, disks: 15.36, CPUdesc: "2 Intel Xeon Platinum 8370C 32 cores 2.8 GHz / 3.5 GHz Turbo", Disksdesc: "NVMe" }
+      Hosts.AV36                = { cores: 36, mem: 576, disks: 15.3, CPUdesc: "2 Intel Xeon Gold 6140 18 cores 2.3 GHz", Disksdesc: "SSD" }
+      Hosts.AV36P               = { cores: 36, mem: 768, disks: 19.2, CPUdesc: "2 Intel Xeon Gold 6240 18 cores 2.6 GHz / 3.9 GHz Turbo", Disksdesc: "NVMe" }
+	  Hosts.['AV36 VCF BYOL']   = { cores: 36, mem: 576, disks: 15.3, CPUdesc: "2 Intel Xeon Gold 6140 18 cores 2.3 GHz", Disksdesc: "SSD" }
+      Hosts.['AV36P VCF BYOL']  = { cores: 36, mem: 768, disks: 19.2, CPUdesc: "2 Intel Xeon Gold 6240 18 cores 2.6 GHz / 3.9 GHz Turbo", Disksdesc: "NVMe" }
+	  Hosts.['AV48 VCF BYOL']   = { cores: 48, mem: 1536, disks: 19.2, CPUdesc: "2 Intel Xeon Gold 6442Y 24 cores 2.6 GHz / 3.3 GHz Turbo / 4 GHz Max", Disksdesc: "NVMe" }
+	  Hosts.['AV48 Trial']      = { cores: 48, mem: 1536, disks: 19.2, CPUdesc: "2 Intel Xeon Gold 6442Y 24 cores 2.6 GHz / 3.3 GHz Turbo / 4 GHz Max", Disksdesc: "NVMe" }
+      Hosts.['AV52 VCF BYOL']   = { cores: 52, mem: 1536, disks: 38.4, CPUdesc: "2 Intel Xeon Platinum 8270 26 cores 2.7 GHz / 4.0 GHz Turbo", Disksdesc: "NVMe" }
+      Hosts.['AV64 VCF BYOL']   = { cores: 64, mem: 1024, disks: 15.36, CPUdesc: "2 Intel Xeon Platinum 8370C 32 cores 2.8 GHz / 3.5 GHz Turbo", Disksdesc: "NVMe" }
+	  Hosts.['AV64 Trial Node'] = { cores: 64, mem: 1024, disks: 15.36, CPUdesc: "2 Intel Xeon Platinum 8370C 32 cores 2.8 GHz / 3.5 GHz Turbo", Disksdesc: "NVMe" }
 
       Host = "AV64"
 //      Region = "EU West"
@@ -198,7 +201,7 @@
 
         f_pricingregion: function () {
           var type = $("#HostType option:selected").val();
-          url = "https://prices.azure.com/api/retail/prices?currencyCode=%27USD%27&$filter=priceType%20eq%20%27Consumption%27%20and%20armskuName%20startswith%20%27" + type + "%27"
+          url = "https://prices.azure.com/api/retail/prices?currencyCode=%27USD%27&$filter=priceType%20eq%20%27Consumption%27%20and%20armskuName%20eq%20%27" + type + "%27"
           return $.ajax({
             url: 'https://api.allorigins.win/get?url=' + encodeURIComponent(url), success: function (data) {
               JSONregion = JSON.parse(data.contents);
@@ -268,7 +271,7 @@
           $("#cost5yreservation5").text("")
           $("#cost5y").text("")
 
-          url = "https://prices.azure.com/api/retail/prices?currencyCode=%27" + currency + "%27&$filter=location%20eq%20%27" + locationU + "%27%20and%20armskuName%20startswith%20%27" + type + "%27"
+          url = "https://prices.azure.com/api/retail/prices?currencyCode=%27" + currency + "%27&$filter=location%20eq%20%27" + locationU + "%27%20and%20armskuName%20eq%20%27" + type + "%27"
           $.ajax({
             url: 'https://api.allorigins.win/get?url=' + encodeURIComponent(url), success: function (data) {
               JSONregion = JSON.parse(data.contents);
@@ -572,6 +575,7 @@
 </body>
 
 </html>
+
 
 
 
