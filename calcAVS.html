@@ -198,7 +198,7 @@
 
         f_pricingregion: function () {
           var type = $("#HostType option:selected").val();
-          url = "https://prices.azure.com/api/retail/prices?currencyCode=%27USD%27&$filter=priceType%20eq%20%27Consumption%27%20and%20armskuName%20eq%20%27" + type + "%27"
+          url = "https://prices.azure.com/api/retail/prices?currencyCode=%27USD%27&$filter=priceType%20eq%20%27Consumption%27%20and%20armskuName%20startswith%20%27" + type + "%27"
           return $.ajax({
             url: 'https://api.allorigins.win/get?url=' + encodeURIComponent(url), success: function (data) {
               JSONregion = JSON.parse(data.contents);
@@ -268,7 +268,7 @@
           $("#cost5yreservation5").text("")
           $("#cost5y").text("")
 
-          url = "https://prices.azure.com/api/retail/prices?currencyCode=%27" + currency + "%27&$filter=location%20eq%20%27" + locationU + "%27%20and%20armskuName%20eq%20%27" + type + "%27"
+          url = "https://prices.azure.com/api/retail/prices?currencyCode=%27" + currency + "%27&$filter=location%20eq%20%27" + locationU + "%27%20and%20armskuName%20startswith%20%27" + type + "%27"
           $.ajax({
             url: 'https://api.allorigins.win/get?url=' + encodeURIComponent(url), success: function (data) {
               JSONregion = JSON.parse(data.contents);
@@ -572,6 +572,7 @@
 </body>
 
 </html>
+
 
 
 
